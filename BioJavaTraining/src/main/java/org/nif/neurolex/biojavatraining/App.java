@@ -64,6 +64,9 @@ public class App {
                                 for (Atom a : g.getAtoms()) {
                                     double distance = Calc.getDistance(a, HEMAtom);
                                     if (distance < 4) {
+                                    if(!(g.getType().equals("amino"))){
+                                        continue;
+                                    }   
                                         ///////get elements names
 //                                        inside = new Hashtable<String, Integer>();
 //                                        System.out.println(g.getPDBName());
@@ -87,20 +90,20 @@ public class App {
                                         inside = new Hashtable<String, Integer>();
                                         System.out.println(g.getPDBName());
                                         ///Check if the HEM atom is in the 
-                                        if (outside.containsKey(HEMAtom.getFullName())) {
-                                            inside = outside.get(HEMAtom.getFullName());
+                                        if (outside.containsKey(HEMAtom.getElement().toString())) {
+                                            inside = outside.get(HEMAtom.getElement().toString());
                                             //Check if the element being bonded to.
                                             if (inside.containsKey(g.getPDBName())) {
                                                 inside.put(g.getPDBName().toString(), inside.get(g.getPDBName()) + 1);
                                             } else {
                                                 inside.put(g.getPDBName(), 1);
-                                                outside.put(HEMAtom.getFullName(), inside);
+                                                outside.put(HEMAtom.getElement().toString(), inside);
                                             }
 
                                         } else {
                                             inside = new Hashtable<String, Integer>();
                                             inside.put(g.getPDBName(), 1);
-                                            outside.put(HEMAtom.getFullName(), inside);
+                                            outside.put(HEMAtom.getElement().toString(), inside);
                                         }
                                         /////////*
                                         
