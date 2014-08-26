@@ -12,8 +12,11 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.biojava.bio.structure.Atom;
 import org.biojava.bio.structure.Calc;
 import org.biojava.bio.structure.Chain;
@@ -36,14 +39,25 @@ import org.biojava3.structure.StructureIO;
  * @author Zaid
  */
 public class App {
-
+    public static LinkedList<LigandResult> LgLigandResults = new LinkedList<>();
     public static void HEMStatic() throws IOException, StructureException {
+        //Get all PDB
         SortedSet<String> ss = getAllIDs();
+        // Create a queue
+        Queue queue = new LinkedList();
+        //Put all the PDB IDs in a queue
+        for (String ID : ss) {
+            queue.add(ID);
+        }
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        //Run the Analysis
+        for (int i = 0; i < queue.size(); i++) {
+            Runnable worker = new ProteinWorkerThread(queue.poll().toString());
+            executor.execute(worker);
+        }
         Iterator<String> ProteinIDs = ss.iterator();
-
         Hashtable<String, Integer> inside = new Hashtable<String, Integer>();
         Hashtable<String, Hashtable<String, Integer>> outside = new Hashtable<>();
-        
         int counter = 0;
         inside = new Hashtable<String, Integer>();
         while (ProteinIDs.hasNext()) {
@@ -64,9 +78,9 @@ public class App {
                                 for (Atom a : g.getAtoms()) {
                                     double distance = Calc.getDistance(a, HEMAtom);
                                     if (distance < 4) {
-                                    if(!(g.getType().equals("amino"))){
-                                        continue;
-                                    }   
+                                        if (!(g.getType().equals("amino"))) {
+                                            continue;
+                                        }
                                         ///////get elements names
 //                                        inside = new Hashtable<String, Integer>();
 //                                        System.out.println(g.getPDBName());
@@ -106,8 +120,7 @@ public class App {
                                             outside.put(HEMAtom.getElement().toString(), inside);
                                         }
                                         /////////*
-                                        
-                                        
+
                                     }
                                 }
                             }
@@ -117,33 +130,29 @@ public class App {
                 }
 
             }
-            if (counter > 100) {
-                break;
-            }
+//            if (counter > 100) {
+//                break;
+//            }
             counter++;
         }
-        
+
         Set<String> OutsideKeys = outside.keySet();
-        
+
         for (String OutsideKey : OutsideKeys) {
             System.out.println("HEM Element :" + OutsideKey + ", Count :");
             Set<String> InsideKeys = outside.get(OutsideKey).keySet();
             for (String InsideKey : InsideKeys) {
-                System.out.println("\t"+InsideKey+":"+outside.get(OutsideKey).get(InsideKey));
+                System.out.println("\t" + InsideKey + ":" + outside.get(OutsideKey).get(InsideKey));
             }
         }
 
     }
 
     public static void main(String args[]) throws IOException, StructureException {
-
-        String pdbLocation = "D:\\pdb";
-
-        AtomCache cache = new AtomCache();
-        cache.setPath(pdbLocation);
-
-        StructureIO.setAtomCache(cache);
-
+//        String pdbLocation = "D:\\pdb";
+//        AtomCache cache = new AtomCache();
+//        cache.setPath(pdbLocation);
+//        StructureIO.setAtomCache(cache);
         HEMStatic();
 
     }
