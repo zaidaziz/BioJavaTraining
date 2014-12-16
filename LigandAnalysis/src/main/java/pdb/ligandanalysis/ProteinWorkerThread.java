@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.nif.neurolex.biojavatraining;
+package pdb.ligandanalysis;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,9 +105,18 @@ public class ProteinWorkerThread implements Runnable {
                                         lg.setResidueGroup(g);
                                         lg.setHemeAtom(HEMAtom);
                                         lg.setResidueAtom(a);
+                                        lg.setProteinID(ProteinID);
                                         System.out.println(ProteinID);
-//                                        System.out.println(HEMAtom.getElement());
-//                                        System.out.println(g.getPDBName());
+                                        String SQLStatement= "INSERT INTO liganddata (PDBID, ChainID, ResidueNumber, Distance, HemeGroupNumber,HemeGroupResidueID)"
+                                                        + "values(" +"'"+ProteinID+"', '"+c.getChainID()+"', "+g.getResidueNumber().getSeqNum()+", "+distance+", "+ HEM.getResidueNumber().getSeqNum()+", "+HEM.getResidueNumber().getSeqNum()+")";
+                                        try {
+                                                MysqlDBService.UpdateDB("INSERT INTO liganddata (PDBID, ChainID, ResidueNumber, Distance, HemeGroupNumber,HemeGroupResidueID)"
+                                                        + "values(" +"'"+ProteinID+"', '"+c.getChainID()+"', "+g.getResidueNumber().getSeqNum()+", "+distance+", "+ HEM.getResidueNumber().getSeqNum()+", "+HEM.getResidueNumber().getSeqNum()+")");
+                                        } catch (SQLException ex) {
+                                            Logger.getLogger(ProteinWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
+                                        } catch (InterruptedException ex) {
+                                            Logger.getLogger(ProteinWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
                                         App.LgLigandResults.add(lg);
                                         System.out.println(App.LgLigandResults.size());
                                     }

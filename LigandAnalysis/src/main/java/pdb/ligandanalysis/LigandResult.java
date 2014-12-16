@@ -1,4 +1,4 @@
-package org.nif.neurolex.biojavatraining;
+package pdb.ligandanalysis;
 import org.biojava.bio.structure.Atom;
 import org.biojava.bio.structure.Group;
 import java.io.Serializable;

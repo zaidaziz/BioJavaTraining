@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.nif.neurolex.biojavatraining;
+package pdb.ligandanalysis;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,14 +48,30 @@ import org.biojava3.structure.StructureIO;
 public class App {
     public static LinkedList<LigandResult> LgLigandResults = new LinkedList<>();
     public static void HEMStaticReader()throws IOException, StructureException, ClassNotFoundException{
-        InputStream file = new FileInputStream("D:\\BioJava\\serialized\\pdbout700000.ser");
+        InputStream file = new FileInputStream("D:\\BioJava\\serialized\\pdbout200000.ser");
         ObjectInput input= new ObjectInputStream(file);
         LinkedList<LigandResult> DeserializedList;
         DeserializedList = (LinkedList<LigandResult>)input.readObject();
-        
-        
+        for(int i=1;i<500;i++){
+            LigandResult lg=DeserializedList.get(i);
+            System.out.println("-----------------------");
+            System.out.println(lg.getResidueGroup().getPDBName());
+            System.out.println(lg.getHemeGroup().getPDBName());
+        }
+        //OutputObject(DeserializedList);
+    }
+    public static void OutputObject(LinkedList<LigandResult> DeserializedList) throws FileNotFoundException, IOException{
+        FileOutputStream fileOut = new FileOutputStream("D:\\BioJava\\serialized\\ObjectSerialized\\1.ser");
+        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+        for(int i=0;i<DeserializedList.size();i++){
+            out.writeObject(DeserializedList.get(i));
+        }
+        out.close();
+        fileOut.close();
+        System.err.println("File saved");
     }
     public static void HEMStatic() throws IOException, StructureException {
+        MysqlDBService.LoadConnection();
         //Get all PDB
         SortedSet<String> ss = getAllIDs();
         // Create a queue
@@ -176,7 +193,7 @@ public class App {
         cache.setPath(pdbLocation);
         StructureIO.setAtomCache(cache);
         //Generatre the HEM Statistics
-        //--HEMStatic();
+        //HEMStatic();
         HEMStaticReader();
     }
 
