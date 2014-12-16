@@ -12,28 +12,33 @@
     </properties>
     <repositories>
             
-            <repository>
-                <id>biojava-maven-repo</id>
-                <name>BioJava repository</name>
-                <url>http://www.biojava.org/download/maven/</url>           
-            </repository>
-        </repositories>
-        <dependencies>
+        <repository>
+            <id>biojava-maven-repo</id>
+            <name>BioJava repository</name>
+            <url>http://www.biojava.org/download/maven/</url>           
+        </repository>
+    </repositories>
+    <dependencies>
                 
-                <dependency>
-                        <!-- This imports the latest SNAPSHOT builds from the protein structure modules of BioJava.
-                        -->                        
-                        <groupId>org.biojava</groupId>
-                        <artifactId>biojava3-structure</artifactId>
-                        <version>4.0.0-SNAPSHOT</version>
-                </dependency>
-                <!-- if you want to use the visualisation tools you need also this one: -->
-                <dependency>                                         
-                        <groupId>org.biojava</groupId>
-                        <artifactId>biojava3-structure-gui</artifactId>
-                        <version>4.0.0-SNAPSHOT</version>
-                </dependency>
-                <!-- other biojava jars as needed -->
-        </dependencies>
+        <dependency>
+            <!-- This imports the latest SNAPSHOT builds from the protein structure modules of BioJava.
+            -->                        
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava3-structure</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+        <!-- if you want to use the visualisation tools you need also this one: -->
+        <dependency>                                         
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava3-structure-gui</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.18</version>
+        </dependency>
+        <!-- other biojava jars as needed -->
+    </dependencies>
     <name>LigandAnalysis</name>
 </project>

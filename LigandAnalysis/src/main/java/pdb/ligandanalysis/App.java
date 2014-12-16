@@ -82,18 +82,24 @@ public class App {
         }
         ExecutorService executor = Executors.newFixedThreadPool(4);
         //Run the Analysis
-        for (int i = 100000; i <= 103734; i++) {
+        for (int i = 1; i <= 20; i++) {
             ProteinWorkerThread worker = new ProteinWorkerThread(queue.get(i));
             worker.run();
             System.out.println("I count: "+i);
         }
-        FileOutputStream fileOut =
-         new FileOutputStream("D:\\BioJava\\serialized\\pdbout110000.ser");
-         ObjectOutputStream out = new ObjectOutputStream(fileOut);
-         out.writeObject(LgLigandResults);
-         out.close();
-         fileOut.close();
-         System.out.printf("Serialized data is saved in /tmp/employee.ser");
+//        FileOutputStream fileOut =
+//         new FileOutputStream("D:\\BioJava\\serialized\\pdbout110000.ser");
+//         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+//         out.writeObject(LgLigandResults);
+//         out.close();
+//         fileOut.close();
+//         System.out.printf("Serialized data is saved in /tmp/employee.ser");
+        
+        
+        
+        
+        
+        
 //        Iterator<String> ProteinIDs = ss.iterator();
 //        Hashtable<String, Integer> inside = new Hashtable<String, Integer>();
 //        Hashtable<String, Hashtable<String, Integer>> outside = new Hashtable<>();
@@ -193,8 +199,8 @@ public class App {
         cache.setPath(pdbLocation);
         StructureIO.setAtomCache(cache);
         //Generatre the HEM Statistics
-        //HEMStatic();
-        HEMStaticReader();
+        HEMStatic();
+        //HEMStaticReader();
     }
 
     public static Structure getStructure(String ProteinID) throws IOException, StructureException {

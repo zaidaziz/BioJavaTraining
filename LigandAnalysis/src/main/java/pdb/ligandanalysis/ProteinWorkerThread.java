@@ -21,8 +21,6 @@ import org.biojava.bio.structure.StructureException;
 import org.biojava3.structure.StructureIO;
 import org.biojava.bio.structure.align.util.AtomCache;
 
-
-
 /**
  *
  * @author Zaid
@@ -32,7 +30,7 @@ public class ProteinWorkerThread implements Runnable {
     String ProteinID;
 
     public ProteinWorkerThread(String ProteinID) {
-        this.ProteinID=ProteinID;
+        this.ProteinID = ProteinID;
     }
 
     @Override
@@ -58,66 +56,30 @@ public class ProteinWorkerThread implements Runnable {
                                 for (Atom a : g.getAtoms()) {
                                     double distance = Calc.getDistance(a, HEMAtom);
                                     if (distance < 4) {
-                                    if(!(g.getType().equals("amino"))){
-                                        continue;
-                                    }   
-                                        ///////get elements names
-//                                        inside = new Hashtable<String, Integer>();
-//                                        System.out.println(g.getPDBName());
-//                                        //Check if the HEM atom is in the 
-//                                        if (outside.containsKey(HEMAtom.getFullName())) {
-//                                            inside = outside.get(HEMAtom.getFullName());
-//                                            //Check if the element being bonded to.
-//                                            if (inside.containsKey(a.getElement().toString())) {
-//                                                inside.put(a.getElement().toString(), inside.get(a.getElement().toString()) + 1);
-//                                            } else {
-//                                                inside.put(a.getElement().toString(), 1);
-//                                                outside.put(HEMAtom.getFullName(), inside);
-//                                            }
-//
-//                                        } else {
-//                                            inside = new Hashtable<String, Integer>();
-//                                            inside.put(a.getElement().toString(), 1);
-//                                            outside.put(HEMAtom.getFullName(), inside);
-//                                        }
-//                                        ///////get group name
-//                                        inside = new Hashtable<String, Integer>();
-//                                        System.out.println(g.getPDBName());
-//                                        ///Check if the HEM atom is in the 
-//                                        if (outside.containsKey(HEMAtom.getElement().toString())) {
-//                                            inside = outside.get(HEMAtom.getElement().toString());
-//                                            //Check if the element being bonded to.
-//                                            if (inside.containsKey(g.getPDBName())) {
-//                                                inside.put(g.getPDBName().toString(), inside.get(g.getPDBName()) + 1);
-//                                            } else {
-//                                                inside.put(g.getPDBName(), 1);
-//                                                outside.put(HEMAtom.getElement().toString(), inside);
-//                                            }
-//
-//                                        } else {
-//                                            inside = new Hashtable<String, Integer>();
-//                                            inside.put(g.getPDBName(), 1);
-//                                            outside.put(HEMAtom.getElement().toString(), inside);
-//                                        }
-//                                        /////////*
-                                        LigandResult lg =new LigandResult();
+                                        if (!(g.getType().equals("amino"))) {
+                                            continue;
+                                        }
+                                        //Get the data
+                                        LigandResult lg = new LigandResult();
                                         lg.setHemeGroup(HEM);
                                         lg.setResidueGroup(g);
                                         lg.setHemeAtom(HEMAtom);
                                         lg.setResidueAtom(a);
+                                        lg.setChainID(g.getChainId());
                                         lg.setProteinID(ProteinID);
                                         System.out.println(ProteinID);
-                                        String SQLStatement= "INSERT INTO liganddata (PDBID, ChainID, ResidueNumber, Distance, HemeGroupNumber,HemeGroupResidueID)"
-                                                        + "values(" +"'"+ProteinID+"', '"+c.getChainID()+"', "+g.getResidueNumber().getSeqNum()+", "+distance+", "+ HEM.getResidueNumber().getSeqNum()+", "+HEM.getResidueNumber().getSeqNum()+")";
+                                        //Update 
+                                        String SQLStatement = "INSERT INTO liganddata (PDBID, ChainID, ResidueNumber, ResidueName, ResidueBindingAtom, Distance, HemeGroupNumber,HemeGroupResidueID)"
+                                                + "values(" + "'" + lg.getProteinID() + "', '" + lg.getChainID() + "', '" + lg.getResidueGroup().getResidueNumber().getSeqNum().toString() +"', '"+ lg.getResidueGroup().getPDBName()+"', '" +lg.getResidueAtom().getName().toString()+"', "+ distance + ", " + lg.getHemeGroup().getResidueNumber().getSeqNum() + ", '" + lg.getHemeAtom().getName() + "')";
                                         try {
-                                                MysqlDBService.UpdateDB("INSERT INTO liganddata (PDBID, ChainID, ResidueNumber, Distance, HemeGroupNumber,HemeGroupResidueID)"
-                                                        + "values(" +"'"+ProteinID+"', '"+c.getChainID()+"', "+g.getResidueNumber().getSeqNum()+", "+distance+", "+ HEM.getResidueNumber().getSeqNum()+", "+HEM.getResidueNumber().getSeqNum()+")");
+                                            System.out.println(SQLStatement);
+                                            MysqlDBService.UpdateDB(SQLStatement);
                                         } catch (SQLException ex) {
                                             Logger.getLogger(ProteinWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
                                         } catch (InterruptedException ex) {
                                             Logger.getLogger(ProteinWorkerThread.class.getName()).log(Level.SEVERE, null, ex);
                                         }
-                                        App.LgLigandResults.add(lg);
+                                        //App.LgLigandResults.add(lg);
                                         System.out.println(App.LgLigandResults.size());
                                     }
                                 }
@@ -135,7 +97,7 @@ public class ProteinWorkerThread implements Runnable {
         }
     }
 
-    public  Structure getStructure(String ProteinID) throws IOException, StructureException {
+    public Structure getStructure(String ProteinID) throws IOException, StructureException {
         String pdbLocation = "D:\\pdb";
         AtomCache cache = new AtomCache();
         cache.setPath(pdbLocation);
@@ -144,7 +106,8 @@ public class ProteinWorkerThread implements Runnable {
         // and let's print out how many atoms are in this structure
         return structure;
     }
-        public  LinkedList<Group> getAllHEM(Structure structure) {
+
+    public LinkedList<Group> getAllHEM(Structure structure) {
         LinkedList<Group> HEMs = new LinkedList<>();
         List<Chain> chains = structure.getChains();
         for (Chain c : chains) {

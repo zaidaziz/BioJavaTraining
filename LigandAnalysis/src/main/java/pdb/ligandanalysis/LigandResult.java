@@ -9,6 +9,14 @@ public class LigandResult implements Serializable{
     private Atom ResidueAtom;
     private Atom HemeAtom;
     private String ProteinID;
+    private String ChainID;
+    
+    public void setChainID(String ChainID) {
+        this.ChainID = ChainID;
+    }
+    public String getChainID(){
+        return this.ChainID;
+    }
     public void setHemeGroup(Group HemeGroup) {
         this.HemeGroup = HemeGroup;
     }
@@ -23,7 +31,7 @@ public class LigandResult implements Serializable{
     }
     
     public void setResidueAtom(Atom ResidueAtom) {
-        this.HemeGroup = HemeGroup;
+        this.ResidueAtom = ResidueAtom;
     }
     public Atom getResidueAtom(){
         return this.ResidueAtom;
